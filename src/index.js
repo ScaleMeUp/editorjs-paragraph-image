@@ -1,4 +1,5 @@
 import ToolboxIcon from './svg/toolbox.svg';
+import PlaceholderImage from './svg/img-placeholder.svg';
 import './index.css';
 import Uploader from './uploader';
 
@@ -127,7 +128,7 @@ export default class ParagraphImage {
   showFullImage() {
     setTimeout(() => {
       this.nodes.image.classList.remove(this.CSS.loader);
-      this.nodes.image.style.background = `url('${this.data.image.url}') center center / contain no-repeat`;
+      this.setImage(this.data.image.url);
     }, LOADER_DELAY);
   }
 
@@ -180,7 +181,8 @@ export default class ParagraphImage {
       image: 'cdx-paragraph-image__image',
       title: 'cdx-paragraph-image__title',
       text: 'cdx-paragraph-image__text',
-      description: 'cdx-paragraph-image__description'
+      description: 'cdx-paragraph-image__description',
+      deleteImageButton: 'cdx-paragraph-image__delete-img-btn'
     };
   }
 
@@ -261,8 +263,27 @@ export default class ParagraphImage {
     this.nodes.image = this.make('div', this.CSS.image);
 
     if (image) {
-      this.nodes.image.style.background = `url('${image.url}') center center / contain no-repeat`;
+      this.setImage(image.url);
+    } else {
+      this.setImagePlaceholder();
     }
+
+    const deleteImageButton = this.make('button', this.CSS.deleteImageButton);
+
+    this.api.tooltip.onHover(deleteImageButton, 'Delete', {
+      placement: 'top',
+      hidingDelay: 500
+    });
+
+    deleteImageButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.setImagePlaceholder();
+      this.data.image = null;
+    });
+
+    this.nodes.image.appendChild(deleteImageButton);
 
     this.nodes.image.addEventListener('click', () => {
       this.uploader.uploadSelectedFile({
@@ -286,6 +307,20 @@ export default class ParagraphImage {
     this.nodes.wrapper.appendChild(cardWrapper);
 
     return this.nodes.wrapper;
+  }
+
+  /**
+   * @param {string} url
+   */
+  setImage(url) {
+    this.nodes.image.style.background = `url('${url}') center center / contain no-repeat`;
+  }
+
+  /**
+   * Set image placeholder
+   */
+  setImagePlaceholder() {
+    this.nodes.image.style.background = `#f6f6f9 url('data:image/svg+xml,${PlaceholderImage}') center center no-repeat`;
   }
 
   /**
