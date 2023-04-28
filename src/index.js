@@ -206,18 +206,21 @@ export default class ParagraphImage {
    */
   static get sanitize() {
     const defaultConfig = {
-      br: false,
-      b: false,
-      i: false,
-      a: false
+      br: true,
+      b: true,
+      i: true,
+      a: true
     };
 
     return {
       title: defaultConfig,
       description: defaultConfig,
-      text: Object.assign({}, defaultConfig, {
-        br: true
-      })
+      text: {
+        br: true,
+        b: true,
+        i: true,
+        a: true
+      }
     };
   }
 
